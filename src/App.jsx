@@ -2,7 +2,7 @@ import { Suspense, lazy } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { LuLogOut } from 'react-icons/lu'
 import { useAuth } from './lib/auth'
-import { supabaseConfigured } from './lib/supabase'
+import { configError, supabaseConfigured } from './lib/supabase'
 import Splash from './components/Splash'
 import { Mark } from './components/Logo'
 import Login from './pages/Login'
@@ -37,7 +37,8 @@ export default function App() {
       <div className="splash">
         <Mark size={64} />
         <h2>Supabase ulanmagan</h2>
-        <p><code>.env</code> faylida <code>VITE_SUPABASE_URL</code> va <code>VITE_SUPABASE_ANON_KEY</code> ni kiriting.</p>
+        <p>{configError}</p>
+        <p className="muted small">Vercel → Settings → Environment Variables da qiymatni tekshiring va qayta deploy qiling.</p>
       </div>
     )
   }

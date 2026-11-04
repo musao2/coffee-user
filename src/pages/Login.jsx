@@ -5,6 +5,7 @@ import { phoneToEmail, supabase } from '../lib/supabase'
 import { errText } from '../lib/format'
 import { useAuth } from '../lib/auth'
 import { Mark } from '../components/Logo'
+import PasswordInput from '../components/PasswordInput'
 
 export default function Login() {
   const [mode, setMode] = useState('login')
@@ -73,7 +74,7 @@ export default function Login() {
         </label>
         <label className="field">
           <span>Parol</span>
-          <input type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
+          <PasswordInput autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Kamida 6 belgi" />
         </label>
 
         {error && <div className="alert err"><LuAlertCircle size={18} />{error}</div>}

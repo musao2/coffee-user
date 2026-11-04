@@ -3,9 +3,10 @@ import { LuPrinter } from 'react-icons/lu'
 import { useRpc } from '../lib/useRpc'
 import { fullDate, num } from '../lib/format'
 import Modal from './Modal'
+import { cleanEnv } from '../lib/supabase'
 
 // Mijoz ilovasi manzili (kassa va admin ilovalarida .env orqali beriladi)
-export const CUSTOMER_URL = (import.meta.env.VITE_CUSTOMER_URL || window.location.origin).replace(/\/$/, '')
+export const CUSTOMER_URL = (cleanEnv(import.meta.env.VITE_CUSTOMER_URL) || window.location.origin).replace(/\/+$/, '')
 
 // Chek: termal printer (58/80mm) uchun, window.print() bilan chiqariladi
 export function ReceiptPaper({ r, qr }) {

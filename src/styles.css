@@ -352,3 +352,13 @@ button.list-item:active { background: var(--paper-2); }
   .table tr td:nth-last-child(2):has(+ td.acts > div:empty) { border-bottom: 0; }
   .table td .sub { display: inline; margin-left: 6px; }
 }
+
+/* ---------- Parol maydoni (ko'zcha bilan) ---------- */
+.pass-input { position: relative; }
+.pass-input input { padding-right: 52px !important; }
+.pass-eye {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 44px; height: 42px;
+  display: grid; place-items: center; border: 0; background: none; color: var(--muted); border-radius: 10px;
+}
+.pass-eye:hover { color: var(--ink); background: rgba(20, 17, 16, 0.05); }
+.pass-eye[aria-pressed='true'] { color: var(--ink); }
