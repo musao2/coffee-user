@@ -50,7 +50,7 @@ export default function Login() {
         <div className="rays" aria-hidden="true" />
         <Mark size={120} light className="mark" />
         <h1>Coffeegram</h1>
-        <p>Har bir kofedan cashback. Keyingisini bonus bilan to‘lang.</p>
+        <p>Kofe kartochkasi: 9 ta kofe oling — 10-chisi bepul.</p>
       </div>
 
       <form className="auth-card" onSubmit={submit}>
@@ -83,7 +83,7 @@ export default function Login() {
         <button className="btn btn-primary btn-lg btn-block" disabled={busy}>
           {busy ? 'Kuting…' : mode === 'login' ? 'Kirish' : 'Akkaunt yaratish'} {!busy && <LuArrowRight size={18} />}
         </button>
-        <p className="auth-foot">Ro‘yxatdan o‘tish bepul. Bonuslar hamkor kofexonalarda ishlaydi.</p>
+        <p className="auth-foot">Ro‘yxatdan o‘tish bepul. Kartochka barcha Coffeegram kofexonalarida ishlaydi.</p>
       </form>
     </div>
   )

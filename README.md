@@ -1,8 +1,9 @@
-# Coffeegram — kofexonalar uchun cashback tizimi
+# Coffeegram — kofexonalar uchun kofe kartochkasi
 
-Mijoz kofe oladi → kassir buyurtmani kiritadi → QR chiqadi (kassada, mijoz ekranida yoki chekda) →
-mijoz telefonidan skanerlaydi → chekning N% i (har kofexonada sozlanadi) bonus balansiga tushadi.
-Bonus bilan istalgan hamkor kofexonada to'lash mumkin. Admin hamma narsani jonli kuzatadi.
+Mijoz kofe oladi → kassir menyudan buyurtmani kiritadi → QR chiqadi (kassada, mijoz ekranida yoki chekda) →
+mijoz telefonidan skanerlaydi → buyurtmadagi **har bir kofe = 1 shtamp**. **9 shtamp = 10-kofe bepul.**
+Bepul kofe keyingi xaridda ishlatiladi (buyurtmadagi eng qimmat kofe chegirma qilinadi).
+Mijoz qaysi kofelarni necha marta olganini ko'radi. Admin hamma narsani jonli kuzatadi.
 
 ## Uchta alohida ilova (bitta Supabase bazasi)
 
@@ -24,6 +25,7 @@ Har bir ilova faqat o'z rolidagi akkauntni kiritadi (mijoz / kassir / admin).
    3. `supabase/03_qr_no_expiry.sql` — QR vaqtsiz, QR'li chek
    4. `supabase/04_activity.sql` — jonli faoliyat jurnali (admin "Jonli" bo'limi)
    5. `supabase/05_staff_credentials.sql` — admin xodimning email va parolini o'zgartiradi
+   6. `supabase/06_stamps.sql` — kofe kartochkasi (cashback o'rniga: 9 ta kofe → 10-chisi bepul)
 2. **Authentication → Sign In / Providers → Email** → **Confirm email** ni **o'chiring**.
 3. **Authentication → URL Configuration** → **Site URL** = mijoz ilovasi domeni (masalan `https://coffeegram.uz`).
 4. **Project Settings → API** → `Project URL` va `anon public` kalit — uchala ilovaning `.env` fayliga.
@@ -73,7 +75,8 @@ Har bir papkani **alohida loyiha** sifatida joylang:
 
 ## Xavfsizlik
 
-- Balans faqat server funksiyalari orqali o'zgaradi (RLS). Rol faqat admin tomonidan beriladi.
+- Kartochka faqat server funksiyalari orqali o'zgaradi (RLS). Rol faqat admin tomonidan beriladi.
 - QR: 48 belgili tasodifiy token, vaqt bilan cheklanmagan, **faqat bir marta** ishlatiladi.
+- Shtamp va bepul kofe faqat server funksiyalari orqali o'zgaradi; kassir summani emas, faqat menyudan mahsulot tanlaydi (narxni server hisoblaydi).
 - Har bir harakat `activity_log` jurnaliga yoziladi; uni faqat admin o'qiydi, hech kim o'zgartira olmaydi.
 # coffee-user

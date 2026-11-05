@@ -10,7 +10,7 @@ export const fullDate = (iso) =>
     ? new Date(iso).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     : ''
 
-export const typeLabel = { cashback: 'Cashback', spend: 'Balansdan', adjust: 'Tuzatish' }
+export const typeLabel = { stamp: 'Xarid', cashback: 'Cashback (eski)', spend: 'Balansdan (eski)', adjust: 'Tuzatish' }
 export const timeAgo = (iso) => {
   if (!iso) return ''
   const s = Math.max(0, Math.round((Date.now() - new Date(iso)) / 1000))
@@ -35,6 +35,7 @@ const ERRORS = {
   CAFE_INACTIVE: 'Kofexona faol emas',
   NOT_FOUND: 'Topilmadi',
   NOT_ADMIN: 'Bu amal faqat admin uchun',
+  NOT_ENOUGH_STAMPS: 'Mijozda yetarli shtamp yo‘q',
   EMAIL_TAKEN: 'Bu email boshqa akkauntda band',
   BAD_EMAIL: 'Email noto‘g‘ri kiritilgan',
   WEAK_PASSWORD: 'Parol kamida 6 ta belgidan iborat bo‘lsin',
