@@ -1,11 +1,22 @@
+import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { LuPrinter } from 'react-icons/lu'
 import { useRpc } from '../lib/useRpc'
 import { fullDate, num } from '../lib/format'
 import Modal from './Modal'
-import { cleanEnv } from '../lib/supabase'
+import { cleanEnv, supabase } from '../lib/supabase'
+import { errText } from '../lib/format'
 
 // Mijoz ilovasi manzili (kassa va admin ilovalarida .env orqali beriladi)
+// Chek tagidagi aloqa ma'lumotlari (o'zgartirish uchun shu yerni tahrirlang)
+export const RECEIPT_FOOTER = {
+  phones: ['(66) 483-00-00', '(88) 244-33-77'],
+  slogan: 'Katta suhbatlar kichik qahvadan boshlanadi',
+  telegram: '@coffeegram_chat',
+  instagram: 'coffeegram.uz',
+}
+
 export const CUSTOMER_URL = (cleanEnv(import.meta.env.VITE_CUSTOMER_URL) || window.location.origin).replace(/\/+$/, '')
 
 // Chek: termal printer (58/80mm) uchun, window.print() bilan chiqariladi
@@ -26,10 +37,10 @@ export function ReceiptPaper({ r, qr }) {
         <img src="/logo-mark.png" alt="" />
         <b>COFFEEGRAM</b>
       </div>
-      <div className="paper-c"><b>{r.cafe_name}</b></div>
+      <div className="paper-c paper-cafe">{r.cafe_name}</div>
       {r.cafe_address && <div className="paper-c sm">{r.cafe_address}</div>}
       <div className="paper-line" />
-      <div className="paper-c"><b>{title}</b></div>
+      <div className="paper-c paper-title">{title}</div>
       {!pending && <Row l="Chek №" r={String(r.receipt_no || '—').padStart(6, '0')} />}
       <Row l="Sana" r={fullDate(r.confirmed_at)} />
       {r.cashier_name && <Row l={r.type === 'adjust' ? 'Admin' : 'Kassir'} r={r.cashier_name} />}
@@ -66,11 +77,23 @@ export function ReceiptPaper({ r, qr }) {
       {qr?.value && (
         <div className="paper-qr">
           {qr.title && <div className="paper-c"><b>{qr.title}</b></div>}
-          <QRCodeSVG value={qr.value} size={150} level="M" includeMargin={false} />
+          <QRCodeSVG value={qr.value} size={170} level="M" includeMargin={false} fgColor="#000000" bgColor="#ffffff" />
           {qr.label && <div className="paper-c sm">{qr.label}</div>}
         </div>
       )}
-      <div className="paper-c sm">Rahmat! Yana kutib qolamiz</div>
+      <div className="paper-footer">
+        <div className="paper-line" />
+        <div className="paper-phones">
+          <span>Phone:</span>
+          <span>{RECEIPT_FOOTER.phones.map((p) => <b key={p}>{p}</b>)}</span>
+        </div>
+        <div className="paper-c paper-slogan">{RECEIPT_FOOTER.slogan}</div>
+        <div className="paper-line dotted" />
+        <div className="paper-row"><span>Telegram:</span><span>{RECEIPT_FOOTER.telegram}</span></div>
+        <div className="paper-row"><span>Instagram:</span><span>{RECEIPT_FOOTER.instagram}</span></div>
+        <div className="paper-line" />
+        <div className="paper-c sm">Rahmat! Yana kutib qolamiz</div>
+      </div>
     </div>
   )
 }
@@ -113,5 +136,50 @@ export function PendingReceiptModal({ r, qrValue, onClose }) {
         <button className="btn btn-ghost" onClick={onClose}>Yopish</button>
       </div>
     </Modal>
+  )
+}
+
+// ---------------------------------------------------------------------
+// Oynasiz, darhol chop etish: chekni yashirin joyga chizib, print'ni chaqiramiz
+// ---------------------------------------------------------------------
+let printing = false
+
+export async function printNode(element) {
+  if (printing) return
+  printing = true
+  const host = document.createElement('div')
+  host.className = 'print-only'
+  document.body.appendChild(host)
+  const root = createRoot(host)
+  flushSync(() => root.render(<div className="print-area">{element}</div>))
+  // logotip rasmi yuklanib bo'lishini kutamiz
+  const imgs = Promise.all([...host.querySelectorAll('img')].map((img) =>
+    img.complete ? null : new Promise((r) => { img.onload = r; img.onerror = r })))
+  await Promise.race([imgs, new Promise((r) => setTimeout(r, 1500))])
+  await new Promise((r) => setTimeout(r, 60))
+  let done = false
+  const cleanup = () => {
+    if (done) return
+    done = true
+    window.removeEventListener('afterprint', cleanup)
+    root.unmount()
+    host.remove()
+    printing = false
+  }
+  window.addEventListener('afterprint', cleanup)
+  window.print()
+  // ba'zi brauzerlarda print() kutmaydi — afterprint keladi; kelmasa ham tozalaymiz
+  setTimeout(cleanup, 1500)
+}
+
+export async function printReceipt(id) {
+  const { data, error } = await supabase.rpc('get_receipt', { p_id: id })
+  if (error) throw new Error(errText(error))
+  await printNode(<ReceiptPaper r={data} qr={{ value: CUSTOMER_URL, label: 'Skanerlang: kofe kartochkangiz va cheklaringiz' }} />)
+}
+
+export function printPendingReceipt(r, qrValue) {
+  return printNode(
+    <ReceiptPaper r={r} qr={{ value: qrValue, title: 'SHTAMP OLISH UCHUN SKANERLANG', label: 'Bir marta ishlatiladi · Coffeegram' }} />
   )
 }

@@ -276,36 +276,51 @@ button.list-item:active { background: var(--paper-2); }
 .pill { background: var(--card); border: 1px solid var(--line); padding: 10px 16px; border-radius: 99px; font-size: 14px; }
 @keyframes pop { from { transform: scale(0.5); opacity: 0; } }
 
-/* ---------- Chek qog'ozi ---------- */
+/* ---------- Chek qog'ozi ----------
+   Termal printer uchun: faqat sof qora, qalin shrift, kontrastli chiziqlar */
 .paper {
-  position: relative; background: #fff; color: #111; font-family: var(--mono); font-size: 13px; line-height: 1.45;
-  padding: 18px 16px 22px; width: 100%; max-width: 320px; margin: 0 auto; box-shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.3);
+  position: relative; background: #fff; color: #000; font-family: var(--mono); font-size: 14px; line-height: 1.4; font-weight: 700;
+  padding: 18px 16px 22px; width: 100%; max-width: 330px; margin: 0 auto; box-shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.3);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
   -webkit-mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 14px 100% repeat-x;
           mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 14px 100% repeat-x;
 }
+.paper * { color: #000 !important; }
 .paper-c { text-align: center; }
-.paper-logo { display: grid; justify-items: center; gap: 4px; margin-bottom: 4px; }
-.paper-logo img { width: 64px; height: auto; }
-.paper-logo b { font-family: var(--head); letter-spacing: 0.2em; font-size: 13px; }
-.paper .sm { font-size: 11px; color: #444; }
-.paper-line { border-top: 1px dashed #777; margin: 8px 0; }
+.paper-logo { display: grid; justify-items: center; gap: 6px; margin-bottom: 8px; }
+.paper-logo img { width: 130px; height: auto; filter: contrast(1.4); }
+.paper-logo b { font-family: var(--head); letter-spacing: 0.18em; font-size: 20px; font-weight: 800; }
+.paper .sm { font-size: 12px; font-weight: 700; }
+.paper-line { border-top: 2px dashed #000; margin: 9px 0; }
 .paper-row { display: flex; justify-content: space-between; gap: 10px; }
 .paper-row > span:last-child { text-align: right; }
-.paper-row.big { font-size: 15px; }
-.paper-item > div:first-child { font-weight: 600; }
-.paper-item .paper-row { color: #333; }
-.paper-qr { display: grid; justify-items: center; gap: 6px; margin: 6px 0 10px; }
-.paper-qr svg { width: 150px; height: 150px; }
-.paper-stamp { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-18deg); border: 3px solid var(--red); color: var(--red); padding: 4px 12px; font-weight: 800; font-size: 20px; border-radius: 6px; opacity: 0.8; }
+.paper-row.big { font-size: 17px; font-weight: 800; }
+.paper-item > div:first-child { font-weight: 800; font-size: 15px; }
+.paper-title { font-size: 16px; font-weight: 800; letter-spacing: 0.06em; }
+.paper-cafe { font-size: 16px; font-weight: 800; }
+.paper-footer { font-size: 14.5px; font-weight: 800; line-height: 1.45; }
+.paper-phones { display: flex; justify-content: space-between; gap: 10px; }
+.paper-phones > span:last-child { display: grid; justify-items: end; }
+.paper-phones b { white-space: nowrap; }
+.paper-slogan { font-size: 15px; font-weight: 800; margin-top: 4px; font-style: italic; }
+.paper-line.dotted { border-top-style: dotted; border-top-width: 3px; }
+.paper-qr { display: grid; justify-items: center; gap: 6px; margin: 8px 0 10px; }
+.paper-qr svg { width: 170px; height: 170px; }
+.paper-stamp { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-18deg); border: 4px solid #000; padding: 4px 12px; font-weight: 800; font-size: 22px; border-radius: 6px; background: #fff; }
+.print-only { position: fixed; left: -10000px; top: 0; width: 80mm; pointer-events: none; }
 @media print {
-  @page { size: 80mm auto; margin: 3mm; }
+  @page { size: 80mm auto; margin: 2mm; }
+  .print-only { position: static; left: auto; width: auto; }
+  html, body { background: #fff !important; }
   body * { visibility: hidden !important; }
   .print-area, .print-area * { visibility: visible !important; }
-  .print-area { position: absolute; left: 0; top: 0; width: 74mm; }
-  .paper { box-shadow: none; max-width: none; padding: 0; -webkit-mask: none; mask: none; font-size: 12px; }
-  .paper-qr svg { width: 34mm; height: 34mm; }
+  .print-area { position: absolute; left: 0; top: 0; width: 76mm; }
+  .paper { box-shadow: none; max-width: none; padding: 0 1mm; -webkit-mask: none; mask: none; font-size: 13.5px; line-height: 1.35; }
+  .paper-logo img { width: 44mm; }
+  .paper-logo b { font-size: 19px; }
+  .paper-row.big { font-size: 16.5px; }
+  .paper-qr svg { width: 38mm; height: 38mm; }
   .modal-back { background: none; position: static; }
-  body { background: #fff; }
 }
 
 /* ---------- Statistika ---------- */
@@ -391,3 +406,7 @@ button.list-item:active { background: var(--paper-2); }
 .free-toggle input { width: 22px; height: 22px; accent-color: var(--ink); flex: none; }
 .free-toggle .grow { display: grid; color: var(--ink); }
 .free-toggle small { color: var(--ink-3); font-size: 12px; }
+
+.textarea { min-height: 88px; padding: 12px 14px; resize: vertical; line-height: 1.4; }
+.note-count { font-size: 12px; color: var(--red); }
+.note-count.ok { color: var(--green); }

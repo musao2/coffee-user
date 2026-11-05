@@ -26,6 +26,8 @@ Har bir ilova faqat o'z rolidagi akkauntni kiritadi (mijoz / kassir / admin).
    4. `supabase/04_activity.sql` — jonli faoliyat jurnali (admin "Jonli" bo'limi)
    5. `supabase/05_staff_credentials.sql` — admin xodimning email va parolini o'zgartiradi
    6. `supabase/06_stamps.sql` — kofe kartochkasi (cashback o'rniga: 9 ta kofe → 10-chisi bepul)
+   7. `supabase/07_expenses.sql` — kunlik xarajatlar (izoh majburiy) va kassir xato chekni bekor qilishi
+   8. `supabase/08_categories.sql` — menyu kategoriyalari (admin qo'shadi, tartiblaydi, yashiradi)
 2. **Authentication → Sign In / Providers → Email** → **Confirm email** ni **o'chiring**.
 3. **Authentication → URL Configuration** → **Site URL** = mijoz ilovasi domeni (masalan `https://coffeegram.uz`).
 4. **Project Settings → API** → `Project URL` va `anon public` kalit — uchala ilovaning `.env` fayliga.
