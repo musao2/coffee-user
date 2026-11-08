@@ -28,6 +28,8 @@ Har bir ilova faqat o'z rolidagi akkauntni kiritadi (mijoz / kassir / admin).
    6. `supabase/06_stamps.sql` — kofe kartochkasi (cashback o'rniga: 9 ta kofe → 10-chisi bepul)
    7. `supabase/07_expenses.sql` — kunlik xarajatlar (izoh majburiy) va kassir xato chekni bekor qilishi
    8. `supabase/08_categories.sql` — menyu kategoriyalari (admin qo'shadi, tartiblaydi, yashiradi)
+   9. `supabase/09_sold.sql` — "Keyingi buyurtma" ham sotuv sifatida hisoblanadi (mijoz keyin skanerlasa ham shtamp oladi)
+   10. `supabase/10_demographics.sql` — mijoz jinsi va yoshi + admin statistikasi
 2. **Authentication → Sign In / Providers → Email** → **Confirm email** ni **o'chiring**.
 3. **Authentication → URL Configuration** → **Site URL** = mijoz ilovasi domeni (masalan `https://coffeegram.uz`).
 4. **Project Settings → API** → `Project URL` va `anon public` kalit — uchala ilovaning `.env` fayliga.
@@ -39,6 +41,11 @@ update public.profiles set role = 'admin', full_name = 'Admin'
  where id = (select id from auth.users where email = 'admin@coffeegram.uz');
 ```
 Qolgan hammasi (kofexonalar, kassirlar, menyu, cashback foizi) — **admin paneldan**.
+
+## Telegram bot (@COFFEEGRAMURGUTBOT)
+
+QR oddiy kamera bilan skanerlansa — Telegram bot ochiladi va shtamp bot ichida olinadi.
+Sozlash: **[TELEGRAM.md](TELEGRAM.md)** (BotFather'da Mini App yoqish + Vercel'da `VITE_TELEGRAM_BOT`).
 
 ## 2. Lokal ishga tushirish
 

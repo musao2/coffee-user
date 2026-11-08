@@ -19,6 +19,16 @@ export const RECEIPT_FOOTER = {
 
 export const CUSTOMER_URL = (cleanEnv(import.meta.env.VITE_CUSTOMER_URL) || window.location.origin).replace(/\/+$/, '')
 
+// Telegram bot (masalan COFFEEGRAMURGUTBOT). Qo'yilgan bo'lsa — QR'lar botga olib boradi:
+// oddiy kamera bilan skanerlanganda Telegram ochiladi va bot ichidagi Coffeegram ilovasida shtamp olinadi.
+export const TELEGRAM_BOT = cleanEnv(import.meta.env.VITE_TELEGRAM_BOT).replace(/^@/, '').replace(/^https?:\/\/t\.me\//, '')
+
+// Buyurtma QR'i: bot bo'lsa t.me/<bot>?startapp=<token>, bo'lmasa mijoz saytining /scan sahifasi
+export const scanLink = (token) =>
+  TELEGRAM_BOT ? `https://t.me/${TELEGRAM_BOT}?startapp=${token}` : `${CUSTOMER_URL}/scan?t=${token}`
+// Chek pastidagi QR: kartochkani ochish
+export const cardLink = () => (TELEGRAM_BOT ? `https://t.me/${TELEGRAM_BOT}?startapp=card` : CUSTOMER_URL)
+
 // Chek: termal printer (58/80mm) uchun, window.print() bilan chiqariladi
 export function ReceiptPaper({ r, qr }) {
   const pending = r.status === 'pending'
@@ -66,8 +76,9 @@ export function ReceiptPaper({ r, qr }) {
       {r.type === 'spend' && !pending && <Row l="Balansdan" r={`−${num(r.balance_used)}`} />}
       {r.type !== 'adjust' && <Row l={<b>TO‘LOV</b>} r={<b>{num(pending ? r.amount : r.paid_cash)} so‘m</b>} big />}
       {r.type === 'cashback' && <Row l="Cashback" r={`+${num(r.cashback_amount)}`} />}
-      {(stamp || stampAdjust) && !pending && <Row l="Shtamp" r={`${r.stamps_earned > 0 ? '+' : ''}${r.stamps_earned}`} />}
-      {(stamp || stampAdjust) && !pending && r.stamps_after != null && <Row l="Kartochka" r={`${r.stamps_after}/${goal}${r.free_after ? ` · bepul: ${r.free_after}` : ''}`} />}
+      {stamp && r.status === 'sold' && <Row l="Shtamp" r="QR skanerlanmagan" />}
+      {(stamp || stampAdjust) && !pending && r.status !== 'sold' && <Row l="Shtamp" r={`${r.stamps_earned > 0 ? '+' : ''}${r.stamps_earned}`} />}
+      {(stamp || stampAdjust) && !pending && r.status !== 'sold' && r.stamps_after != null && <Row l="Kartochka" r={`${r.stamps_after}/${goal}${r.free_after ? ` · bepul: ${r.free_after}` : ''}`} />}
       {pending && stamp && <Row l="Shtamp (kofe)" r={`+${r.stamp_qty ?? ''}`} />}
       {r.type === 'adjust' && !stampAdjust && <Row l={<b>O‘zgarish</b>} r={<b>{r.cashback_amount > 0 ? `+${num(r.cashback_amount)}` : `−${num(r.balance_used)}`}</b>} big />}
       {r.status === 'reversed' && r.note && <div className="sm">{r.note}</div>}
@@ -111,7 +122,7 @@ export default function ReceiptModal({ id, onClose, actions }) {
       {data && (
         <>
           <div className="print-area">
-            <ReceiptPaper r={data} qr={{ value: CUSTOMER_URL, label: 'Skanerlang: kofe kartochkangiz va cheklaringiz' }} />
+            <ReceiptPaper r={data} qr={{ value: cardLink(), label: TELEGRAM_BOT ? `Telegram: @${TELEGRAM_BOT} — kofe kartochkangiz` : 'Skanerlang: kofe kartochkangiz va cheklaringiz' }} />
           </div>
           <div className="modal-actions">
             <button className="btn btn-primary" onClick={() => window.print()}><LuPrinter size={18} /> Chop etish</button>
@@ -175,7 +186,7 @@ export async function printNode(element) {
 export async function printReceipt(id) {
   const { data, error } = await supabase.rpc('get_receipt', { p_id: id })
   if (error) throw new Error(errText(error))
-  await printNode(<ReceiptPaper r={data} qr={{ value: CUSTOMER_URL, label: 'Skanerlang: kofe kartochkangiz va cheklaringiz' }} />)
+  await printNode(<ReceiptPaper r={data} qr={{ value: cardLink(), label: TELEGRAM_BOT ? `Telegram: @${TELEGRAM_BOT} — kofe kartochkangiz` : 'Skanerlang: kofe kartochkangiz va cheklaringiz' }} />)
 }
 
 export function printPendingReceipt(r, qrValue) {

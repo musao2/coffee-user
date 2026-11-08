@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { LuAlertCircle, LuArrowRight, LuInfo } from 'react-icons/lu'
+import { LuAlertCircle, LuArrowRight, LuInfo, LuSend } from 'react-icons/lu'
 import { phoneToEmail, supabase } from '../lib/supabase'
 import { errText } from '../lib/format'
 import { useAuth } from '../lib/auth'
 import { Mark } from '../components/Logo'
+import ProfileFields from '../components/ProfileFields'
 import PasswordInput from '../components/PasswordInput'
 
 export default function Login() {
@@ -12,6 +13,8 @@ export default function Login() {
   const [phone, setPhone] = useState('')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
+  const [gender, setGender] = useState('')
+  const [birthYear, setBirthYear] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -25,6 +28,19 @@ export default function Login() {
     if (session && profile) navigate(target, { replace: true })
   }, [session, profile])
 
+  // Telegram ichida: raqamni bir bosishda olish (foydalanuvchi ruxsat bersa)
+  const tg = window.Telegram?.WebApp
+  const canAskPhone = !!(tg?.initData && tg.requestContact)
+  const askPhone = () => {
+    try {
+      tg.requestContact((ok, res) => {
+        const num = String(res?.responseUnsafe?.contact?.phone_number || '').replace(/\D/g, '')
+        if (ok && num) setPhone(num.slice(-9))
+        if (ok && res?.responseUnsafe?.contact?.first_name && !name) setName(res.responseUnsafe.contact.first_name)
+      })
+    } catch {}
+  }
+
   const digits = phone.replace(/\D/g, '').slice(0, 9)
   const pretty = digits.replace(/^(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2}).*/, (_, a, b, c, d) => [a, b, c, d].filter(Boolean).join(' '))
 
@@ -33,12 +49,14 @@ export default function Login() {
     setError(''); setInfo('')
     if (digits.length !== 9) return setError('Telefon raqamni to‘liq kiriting')
     if (password.length < 6) return setError('Parol kamida 6 ta belgidan iborat bo‘lsin')
+    if (mode === 'register' && !gender) return setError('Jinsingizni tanlang')
+    if (mode === 'register' && !birthYear) return setError('Tug‘ilgan yilingizni tanlang')
     const fullPhone = '+998' + digits
     setBusy(true)
     const email = phoneToEmail(fullPhone)
     const res = mode === 'login'
       ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password, options: { data: { phone: fullPhone, full_name: name.trim() } } })
+      : await supabase.auth.signUp({ email, password, options: { data: { phone: fullPhone, full_name: name.trim(), gender, birth_year: Number(birthYear) } } })
     setBusy(false)
     if (res.error) return setError(errText(res.error))
     if (mode === 'register' && !res.data.session) setInfo('Supabase’da "Confirm email" o‘chirilmagan. README’ga qarang.')
@@ -64,6 +82,10 @@ export default function Login() {
             <span>Ismingiz</span>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan, Aziza" autoComplete="given-name" required />
           </label>
+        )}
+        {mode === 'register' && <ProfileFields gender={gender} setGender={setGender} birthYear={birthYear} setBirthYear={setBirthYear} />}
+        {canAskPhone && (
+          <button type="button" className="btn btn-outline btn-block" onClick={askPhone}><LuSend size={17} /> Raqamni Telegram’dan olish</button>
         )}
         <label className="field">
           <span>Telefon raqam</span>

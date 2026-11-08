@@ -7,6 +7,7 @@ import Splash from './components/Splash'
 import { Mark } from './components/Logo'
 import Login from './pages/Login'
 import Home from './pages/Home'
+import CompleteProfile from './components/CompleteProfile'
 // Skaner kutubxonasi og'ir — faqat kerak bo'lganda yuklanadi
 const Scan = lazy(() => import('./pages/Scan'))
 
@@ -28,7 +29,12 @@ function CustomerOnly({ children }) {
       </div>
     )
   }
-  return children
+  return (
+    <>
+      {children}
+      {(!profile.gender || !profile.birth_year) && <CompleteProfile />}
+    </>
+  )
 }
 
 export default function App() {

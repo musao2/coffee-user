@@ -20,7 +20,7 @@ export const timeAgo = (iso) => {
   return dateTime(iso)
 }
 export const timeOnly = (iso) => (iso ? new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '')
-export const statusLabel = { pending: 'Kutilmoqda', confirmed: 'Tasdiqlangan', expired: 'Muddati o‘tgan', cancelled: 'Bekor', reversed: 'Qaytarilgan' }
+export const statusLabel = { pending: 'Ochiq QR', sold: 'Sotildi (mijozsiz)', confirmed: 'Tasdiqlangan', expired: 'Muddati o‘tgan', cancelled: 'Bekor', reversed: 'Qaytarilgan' }
 
 export const dateTime = (iso) =>
   iso
@@ -35,6 +35,8 @@ const ERRORS = {
   CAFE_INACTIVE: 'Kofexona faol emas',
   NOT_FOUND: 'Topilmadi',
   NOT_ADMIN: 'Bu amal faqat admin uchun',
+  GENDER_REQUIRED: 'Jinsingizni tanlang',
+  BIRTH_YEAR_REQUIRED: 'Tug‘ilgan yilingizni tanlang',
   CATEGORY_EXISTS: 'Bunday kategoriya allaqachon bor',
   CATEGORY_NOT_EMPTY: 'Kategoriyada mahsulotlar bor — avval ularni boshqa kategoriyaga o‘tkazing',
   NOT_ENOUGH_STAMPS: 'Mijozda yetarli shtamp yo‘q',
@@ -86,7 +88,10 @@ export const extractToken = (text) => {
   let t = (text || '').trim()
   try {
     const u = new URL(t)
-    t = u.searchParams.get('t') || ''
+    // mijoz sayti (/scan?t=...) yoki Telegram bot havolasi (t.me/<bot>?startapp=...)
+    t = u.searchParams.get('t') || u.searchParams.get('startapp') || u.searchParams.get('start') || ''
   } catch {}
   return /^[a-f0-9]{48}$/.test(t) ? t : null
 }
+
+export const genderLabel = { male: 'Erkak', female: 'Ayol', unknown: 'Kiritilmagan' }
