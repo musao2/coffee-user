@@ -30,6 +30,7 @@ Har bir ilova faqat o'z rolidagi akkauntni kiritadi (mijoz / kassir / admin).
    8. `supabase/08_categories.sql` — menyu kategoriyalari (admin qo'shadi, tartiblaydi, yashiradi)
    9. `supabase/09_sold.sql` — "Keyingi buyurtma" ham sotuv sifatida hisoblanadi (mijoz keyin skanerlasa ham shtamp oladi)
    10. `supabase/10_demographics.sql` — mijoz jinsi va yoshi + admin statistikasi
+   11. `supabase/11_top_customers.sql` — eng ko'p xarid qilgan mijozlar (TOP reyting)
 2. **Authentication → Sign In / Providers → Email** → **Confirm email** ni **o'chiring**.
 3. **Authentication → URL Configuration** → **Site URL** = mijoz ilovasi domeni (masalan `https://coffeegram.uz`).
 4. **Project Settings → API** → `Project URL` va `anon public` kalit — uchala ilovaning `.env` fayliga.
