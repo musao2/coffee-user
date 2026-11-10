@@ -32,7 +32,7 @@ function CustomerOnly({ children }) {
   return (
     <>
       {children}
-      {(!profile.gender || !profile.birth_year) && <CompleteProfile />}
+      {(!profile.gender || !profile.birth_date) && <CompleteProfile />}
     </>
   )
 }

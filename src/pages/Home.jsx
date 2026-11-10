@@ -7,6 +7,7 @@ import { dateTime, num, som } from '../lib/format'
 import { Brand } from '../components/Logo'
 import StampCard from '../components/StampCard'
 import ReceiptModal from '../components/Receipt'
+import { splitDate } from '../components/ProfileFields'
 
 const GOAL = 9
 
@@ -54,6 +55,9 @@ export default function Home() {
         <div className="alert err" style={{ marginBottom: 12 }}><LuAlertCircle size={18} />Akkauntingiz bloklangan. Administratorga murojaat qiling.</div>
       )}
       <p className="hello">Salom, <b>{profile.full_name || 'mehmon'}</b></p>
+      {isBirthday(profile.birth_date) && (
+        <div className="alert bday"><LuGift size={18} />Tug‘ilgan kuningiz bilan, {profile.full_name || 'aziz mehmon'}! Coffeegram jamoasi sizni tabriklaydi.</div>
+      )}
 
       <StampCard stamps={profile.stamps || 0} free={profile.free_available || 0} goal={GOAL} />
 
@@ -128,4 +132,10 @@ export default function Home() {
       {receiptId && <ReceiptModal id={receiptId} onClose={() => setReceiptId(null)} />}
     </div>
   )
+}
+
+function isBirthday(date) {
+  const { m, d } = splitDate(date)
+  const now = new Date()
+  return !!m && Number(m) === now.getMonth() + 1 && Number(d) === now.getDate()
 }

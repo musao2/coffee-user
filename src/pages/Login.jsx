@@ -5,7 +5,7 @@ import { phoneToEmail, supabase } from '../lib/supabase'
 import { errText } from '../lib/format'
 import { useAuth } from '../lib/auth'
 import { Mark } from '../components/Logo'
-import ProfileFields from '../components/ProfileFields'
+import ProfileFields, { joinDate } from '../components/ProfileFields'
 import PasswordInput from '../components/PasswordInput'
 
 export default function Login() {
@@ -14,7 +14,7 @@ export default function Login() {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [gender, setGender] = useState('')
-  const [birthYear, setBirthYear] = useState('')
+  const [birth, setBirth] = useState({ y: '', m: '', d: '' })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
@@ -50,13 +50,14 @@ export default function Login() {
     if (digits.length !== 9) return setError('Telefon raqamni to‘liq kiriting')
     if (password.length < 6) return setError('Parol kamida 6 ta belgidan iborat bo‘lsin')
     if (mode === 'register' && !gender) return setError('Jinsingizni tanlang')
-    if (mode === 'register' && !birthYear) return setError('Tug‘ilgan yilingizni tanlang')
+    const birthDate = joinDate(birth)
+    if (mode === 'register' && !birthDate) return setError('Tug‘ilgan kuningizni to‘liq tanlang (kun, oy, yil)')
     const fullPhone = '+998' + digits
     setBusy(true)
     const email = phoneToEmail(fullPhone)
     const res = mode === 'login'
       ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password, options: { data: { phone: fullPhone, full_name: name.trim(), gender, birth_year: Number(birthYear) } } })
+      : await supabase.auth.signUp({ email, password, options: { data: { phone: fullPhone, full_name: name.trim(), gender, birth_date: birthDate, birth_year: Number(birth.y) } } })
     setBusy(false)
     if (res.error) return setError(errText(res.error))
     if (mode === 'register' && !res.data.session) setInfo('Supabase’da "Confirm email" o‘chirilmagan. README’ga qarang.')
@@ -83,7 +84,7 @@ export default function Login() {
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Masalan, Aziza" autoComplete="given-name" required />
           </label>
         )}
-        {mode === 'register' && <ProfileFields gender={gender} setGender={setGender} birthYear={birthYear} setBirthYear={setBirthYear} />}
+        {mode === 'register' && <ProfileFields gender={gender} setGender={setGender} birth={birth} setBirth={setBirth} />}
         {canAskPhone && (
           <button type="button" className="btn btn-outline btn-block" onClick={askPhone}><LuSend size={17} /> Raqamni Telegram’dan olish</button>
         )}

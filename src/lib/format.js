@@ -37,6 +37,7 @@ const ERRORS = {
   NOT_ADMIN: 'Bu amal faqat admin uchun',
   GENDER_REQUIRED: 'Jinsingizni tanlang',
   BIRTH_YEAR_REQUIRED: 'Tug‘ilgan yilingizni tanlang',
+  BIRTH_DATE_REQUIRED: 'Tug‘ilgan kuningizni to‘liq tanlang',
   CATEGORY_EXISTS: 'Bunday kategoriya allaqachon bor',
   CATEGORY_NOT_EMPTY: 'Kategoriyada mahsulotlar bor — avval ularni boshqa kategoriyaga o‘tkazing',
   NOT_ENOUGH_STAMPS: 'Mijozda yetarli shtamp yo‘q',
